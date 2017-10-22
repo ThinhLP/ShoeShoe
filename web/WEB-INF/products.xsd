@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.shoeshoe.vn/product"
+           targetNamespace="http://www.shoeshoe.vn/product"
+           elementFormDefault="qualified">
+    <xs:element name="ProductList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="product" type="Product" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+        
+    </xs:element>
+    <xs:simpleType name="Price">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="Product">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="discountPrice" type="Price" />
+            <xs:element name="originalPrice" type="Price" />
+            <xs:element name="createdDate" type="xs:dateTime"/>
+            <xs:element name="inStock" type="xs:positiveInteger" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:positiveInteger" use="required"/> 
+        <xs:attribute name="brand" type="xs:string" use="optional" />
+    </xs:complexType>
+</xs:schema>
