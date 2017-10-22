@@ -4,8 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/servlets/ProcessServlet.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/commons/Const.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/build/web/WEB-INF/giay-hieu.html</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/Utils.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/services/ParseService.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/XMLUtils.java</file>
-            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/InternetUtils.java</file>
         </group>
     </open-files>
 </project-private>

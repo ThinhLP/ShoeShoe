@@ -14,7 +14,11 @@ public class Const {
     
     public static class FILE_PATH {
         public final static String ONE_BEEPER_HTML = "WEB-INF/one-beeper.html";
-        public final static String GIAY_HIEU_HTML = "WEB-INF/giay-hieu.html";
+        public final static String SAIGON_SNEAKER_HTML = "WEB-INF/saigon-sneaker.html";
     }
+    
+    public static String[] REDUNDANT_TAGS = new String[]{"form", "script", "style"};
+    public static String[] EMPTY_TAGS = new String[]{"img", "link"};
+    
     
 }

@@ -30,6 +30,7 @@ public class InternetUtils {
         Writer writer = null;
         InputStream is = null;
         BufferedReader reader = null;
+        String[] redundantTags = Const.REDUNDANT_TAGS;
         try {
             URL url = new URL(uri);
             URLConnection con = url.openConnection();
@@ -43,43 +44,74 @@ public class InternetUtils {
             writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
 
             boolean isBodyTagStart = false;
-            boolean isInScriptTag = false;
+            boolean isInScriptTab = false;
             int countOpenDiv = 0;
 
+            writer.write("<body>\n");
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
 
                 if (line.contains("<body")) {
                     isBodyTagStart = true;
                 }
-                if (line.contains("<script") || line.contains("<style") || line.contains("<form")) {
-                    isInScriptTag = true;
-                }
-                if (line.contains("</script>") || line.contains("</style>") || line.contains("</form>")) {
-                    isInScriptTag = false;
-                }
-                if (isInScriptTag) {
+
+                if (!isBodyTagStart) {
                     continue;
                 }
 
-                countOpenDiv += countStringInALine(line, "<div") - countStringInALine(line, "</div>");
+                String beforeTag = "";
+
+                // Check open unused tags
+                for (int i = 0; i < redundantTags.length; i++) {
+                    if (line.contains("<" + redundantTags[i])) {
+                        beforeTag = Utils.getContentBeforeTagInLine(line, redundantTags[i]);
+                        isInScriptTab = true;
+                        if (!beforeTag.isEmpty()) {
+                            writer.write(beforeTag + "\n");
+                        }
+                        break;
+                    }
+                }
+
+                // Check close unused tags
+                boolean isEndScriptTab = false;
+                String afterTag = "";
+                for (int i = 0; i < redundantTags.length; i++) {
+                    if (line.contains("</" + redundantTags[i] + ">")) {
+                        afterTag = Utils.getContentAfterTagInLine(line, redundantTags[i]);
+                        isInScriptTab = false;
+                        isEndScriptTab = true;
+                        if (!afterTag.isEmpty() && !Utils.containRedundantTag(afterTag)) {
+                            writer.write(afterTag + "\n");
+                        }
+                        break;
+                    }
+                }
+
+                if (isInScriptTab) {
+                    continue;
+                }
+
+                countOpenDiv += Utils.countStringInALine(line, "<div") - Utils.countStringInALine(line, "</div>");
 
                 if (countOpenDiv < 0) {
                     countOpenDiv = 0;
                     continue;
                 }
 
-                if (isBodyTagStart && !line.isEmpty() && !line.contains("</script>")
-                        && !line.contains("</style>")
+                if (!line.isEmpty()
+                        && !isEndScriptTab
+                        && !line.contains("<body")
                         && !line.contains("<iframe")
-                        && !line.contains("</form>") && !line.contains("<br>")) {
-                    line = normalizeLine(line);
-                    writer.write(line + "\n");
+                        && !line.contains("<br>")) {
+                    line = Utils.normalizeLine(line);
                     if (line.contains("</body>")) {
                         break;
                     }
+                    writer.write(line + "\n");
                 }
             }
+                writer.write("</body>");
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(InternetUtils.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,104 +132,6 @@ public class InternetUtils {
                 Logger.getLogger(InternetUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-    
-    private static String nomarlizeEmptyTag(String line, String tagName) {
-        int emptyTagPos = line.indexOf("<" + tagName);
-        StringBuilder builder = new StringBuilder();
-        boolean inOpenTag = false;
-        boolean isTag = false;
-        boolean isInEmptyTag = false;
-
-        for (int i = 0; i < line.length() - 1; i++) {
-            char ch = line.charAt(i);
-            builder.append(ch);
-            if (ch == '<') {
-                inOpenTag = true;
-                isTag = true;
-            } else if (ch == '>') {
-                inOpenTag = false;
-            }
-            if (ch == ' ') {
-                isTag = false;
-            }
-        
-            if (i == emptyTagPos) {
-                isInEmptyTag = true;
-            }
-
-            if (inOpenTag && !isTag) {
-                if (isInEmptyTag) {
-                    char postCh = line.charAt(i + 1);
-                    if (ch != '/' && postCh == '>') {
-                        builder.append("/");
-                        isInEmptyTag = false;
-                    }
-                }
-            }
-        }
-        if (!line.isEmpty()) {
-            builder.append(line.charAt(line.length() - 1));
-        }
-        return builder.toString();
-    }
-
-    private static String normalizeLine(String line) {
-        StringBuilder builder = new StringBuilder();
-
-        //line = line.replaceAll("[&](\\w)+[;]", "");
-        line = line.replaceAll("\\W&\\W", " &amp; ");
-                
-        if (line.contains("<img")) {
-            line = nomarlizeEmptyTag(line, "img");
-        }
-        if (line.contains("<link")) {
-            line = nomarlizeEmptyTag(line, "link");
-        }
-
-        //Normalize Tag Have Attribute Without Value
-        boolean inOpenTag = false;
-        boolean isTag = false;
-        boolean isInQuoteMark = false;
-
-        for (int i = 0; i < line.length() - 1; i++) {
-            char ch = line.charAt(i);
-            builder.append(ch);
-            if (ch == '<') {
-                inOpenTag = true;
-                isTag = true;
-            } else if (ch == '>') {
-                inOpenTag = false;
-            }
-            if (ch == ' ') {
-                isTag = false;
-            }
-            if (ch == '\"' || ch == '\'') {
-                isInQuoteMark = !isInQuoteMark;
-            }
-
-            if (inOpenTag && !isTag && !isInQuoteMark) {
-                if (Character.isAlphabetic(ch)) {
-                    char postCh = line.charAt(i + 1);
-                    if (postCh == ' ') {
-                        builder.append("=\"\"");
-                    }
-                }
-            }
-        }
-        if (!line.isEmpty()) {
-            builder.append(line.charAt(line.length() - 1));
-        }
-        return builder.toString();
-    }
-
-    private static int countStringInALine(String line, String strCount) {
-        int count = 0;
-        while (line.contains(strCount)) {
-            count++;
-            line = line.replaceFirst(strCount, "");
-        }
-        return count;
     }
 
 }
