@@ -6,13 +6,21 @@
 package utils;
 
 import commons.Const;
+import dtos.BrandDto;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author ThinhLPSE61759
  */
 public class Utils {
-    
+
     public static long convertToRawMoney(String strMoney) {
         String money = strMoney.replaceAll("\\D", "");
         try {
@@ -21,12 +29,12 @@ public class Utils {
             return 0;
         }
     }
-    
+
     public static String removeTag(String line, String tagName) {
         return line.replaceAll("(<" + tagName + ")[^>]*(>)", "")
                 .replaceAll("</" + tagName + ">", "");
     }
-    
+
     public static String nomarlizeEmptyTag(String line, String tagName) {
         int emptyTagPos = line.indexOf("<" + tagName);
         StringBuilder builder = new StringBuilder();
@@ -46,7 +54,7 @@ public class Utils {
             if (ch == ' ') {
                 isTag = false;
             }
-        
+
             if (i == emptyTagPos) {
                 isInEmptyTag = true;
             }
@@ -66,12 +74,12 @@ public class Utils {
         }
         return builder.toString();
     }
-    
+
     public static String normalizeLine(String line) {
         StringBuilder builder = new StringBuilder();
 
         //line = line.replaceAll("[&](\\w)+[;]", "");
-        line =  line.replaceAll("\\s{2}", " ")
+        line = line.replaceAll("\\s{2}", " ")
                 .replaceAll("[\\s]+=", "=")
                 .replaceAll(" & ", " &amp; ")
                 .replaceAll(":=", "=");
@@ -84,9 +92,8 @@ public class Utils {
         if (line.contains("<link")) {
             line = nomarlizeEmptyTag(line, "link");
         }
-        
-        //line = removeTag(line, "a");
 
+        //line = removeTag(line, "a");
         //Normalize Tag Have Attribute Without Value
         boolean inOpenTag = false;
         boolean isTag = false;
@@ -95,7 +102,7 @@ public class Utils {
         for (int i = 0; i < line.length() - 1; i++) {
             char ch = line.charAt(i);
             builder.append(ch);
-            
+
             if (ch == '<') {
                 inOpenTag = true;
                 isTag = true;
@@ -114,8 +121,8 @@ public class Utils {
                     char postCh = line.charAt(i + 1);
                     if (postCh == ' ') {
                         builder.append("=\"\"");
-                    } 
-                } 
+                    }
+                }
             }
         }
         if (!line.isEmpty()) {
@@ -132,8 +139,8 @@ public class Utils {
         }
         return count;
     }
-    
-      public static String getContentBeforeTagInLine(String line, String tagName) {
+
+    public static String getContentBeforeTagInLine(String line, String tagName) {
         return line.substring(0, line.indexOf("<" + tagName)).trim();
     }
 
@@ -155,5 +162,40 @@ public class Utils {
         return Utils.countStringInALine(line, "<" + tag) - Utils.countStringInALine(line, "</" + tag + ">");
     }
 
-    
+    public static String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+        return sdf.format(date);
+    }
+
+    public static BrandDto existBrand(String brand, List<BrandDto> brands) {
+        if (brands == null || brands.isEmpty()) {
+            return null;
+        }
+        for (BrandDto dto : brands) {
+            if (dto.getBrandName().equalsIgnoreCase(brand)) {
+                return dto;
+            }
+        }
+        return null;
+    }
+
+    public static <T> int getMaxId(List<T> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        T lastElm = list.get(list.size() - 1);
+        Method[] lastElmMethods = lastElm.getClass().getMethods();
+        try {
+            for (Method method : lastElmMethods) {
+                String methodName = method.getName();
+                if (methodName.matches("get\\w*Id")) {
+                    return (Integer) method.invoke(lastElm);
+                }
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
 }
