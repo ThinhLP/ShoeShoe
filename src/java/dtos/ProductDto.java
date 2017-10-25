@@ -10,7 +10,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -26,27 +25,26 @@ import javax.xml.bind.annotation.XmlType;
     "createdDate",
     "imageUrl"
 })
-@XmlRootElement(name = "product")
 public class ProductDto implements Serializable {
     @XmlAttribute(required = true)
     private int proId;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String proName;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private BrandDto brand;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private long discountedPrice;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private long originalPrice;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String createdDate;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String imageUrl;
     
     @XmlAttribute(required = true)

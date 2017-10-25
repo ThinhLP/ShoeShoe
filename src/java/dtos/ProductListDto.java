@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author ThinhLPSE61759
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "products")
+@XmlRootElement(name = "productList", namespace = "http://www.shoeshoe.vn/productList")
 public class ProductListDto {
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, name = "product", namespace = "http://www.shoeshoe.vn/productList")
     private List<ProductDto> productList;
 
     public ProductListDto() {

@@ -17,12 +17,12 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "brand")
+@XmlRootElement(name = "brand", namespace = "http://www.shoeshoe.vn/productList")
 public class BrandDto {
     @XmlAttribute(required = true)
     private int brandId;
     
-    @XmlElement(required = true)
+    @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String brandName;
 
     public BrandDto() {

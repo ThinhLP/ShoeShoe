@@ -15,6 +15,7 @@ public class Const {
     public static class FILE_PATH {
         public final static String ONE_BEEPER_HTML = "WEB-INF/one-beeper.html";
         public final static String SAIGON_SNEAKER_HTML = "WEB-INF/saigon-sneaker.html";
+        public final static String SCHEMA_FILE = "WEB-INF/products.xsd";
     }
     
     public static String[] REDUNDANT_TAGS = new String[]{"form", "script", "style"};

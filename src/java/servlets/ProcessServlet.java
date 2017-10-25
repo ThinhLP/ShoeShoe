@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import services.ParseService;
+import services.Parser;
 import utils.InternetUtils;
 import utils.Utils;
 import utils.XMLUtils;
@@ -65,16 +65,21 @@ public class ProcessServlet extends HttpServlet {
         BrandListDto currentBrands = new BrandListDto(brands);
         ProductListDto currentsProduct = new ProductListDto(products);
 
-        ParseService.getListProductFromOneBeeperPage(saigonSneakerHtmlPath, currentsProduct, currentBrands);
-        ParseService.getListProductFromOneBeeperPage(onebeeperHtmlPath, currentsProduct, currentBrands);
+        Parser.getListProductFromOneBeeperPage(saigonSneakerHtmlPath, currentsProduct, currentBrands);
+        Parser.getListProductFromOneBeeperPage(onebeeperHtmlPath, currentsProduct, currentBrands);
 
         try (PrintWriter out = response.getWriter()) {
             for (ProductDto pro : currentsProduct.getProductList()) {
                 out.println(pro);
             }
+            
+            String data = XMLUtils.marsalData(currentsProduct);
+            XMLUtils.validateXML(data, realPath + Const.FILE_PATH.SCHEMA_FILE, out);
+            out.println(data);
         }
         
-        XMLUtils.saveToXML(realPath + "WEB-INF/productList.xml", currentsProduct);
+     
+        //XMLUtils.validateXML(realPath + "WEB-INF/productList.xml", currentsProduct);
 
     }
 
