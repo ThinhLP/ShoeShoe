@@ -40,6 +40,7 @@ and open the template in the editor.
             <xs:element name="originalPrice" type="Price" />
             <xs:element name="createdDate" type="xs:dateTime"/>
             <xs:element name="imageUrl" type="xs:string" />
+            <xs:element name="updatedDate" type="xs:dateTime" minOccurs="0" />
         </xs:sequence>
         <xs:attribute name="proId" type="xs:positiveInteger" use="required"/> 
         <xs:attribute name="inStock" type="xs:boolean" default="1" /> 

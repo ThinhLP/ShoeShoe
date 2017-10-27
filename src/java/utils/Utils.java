@@ -12,8 +12,12 @@ import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
@@ -196,6 +200,35 @@ public class Utils {
             Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
+    }
+
+    public static XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
+        try {
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.setTime(date);
+            DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
+            XMLGregorianCalendar xmlGregorianCalendar = datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
+            return xmlGregorianCalendar;
+        } catch (DatatypeConfigurationException ex) {
+            return null;
+        }
+    }
+
+    public static Date convertStringGregorianCalendarToDate(String strXmlGregorianCalendar) {
+        try {
+            XMLGregorianCalendar calendar  = DatatypeFactory.newInstance().newXMLGregorianCalendar(strXmlGregorianCalendar);
+            return calendar.toGregorianCalendar().getTime();
+        } catch (DatatypeConfigurationException ex) {
+            return null;
+        }
+    }
+    
+    public static java.sql.Date toSqlDate(java.util.Date date) {
+        return new java.sql.Date(date.getTime());
+    }
+    
+    public static java.util.Date toUtilDate(java.sql.Date date) {
+        return new java.util.Date(date.getTime());
     }
 
 }

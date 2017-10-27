@@ -5,28 +5,17 @@
  */
 package utils;
 
-import dtos.BrandDto;
-import dtos.ProductListDto;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -121,7 +110,7 @@ public class XMLUtils {
         } 
     }
     
-    public static <T> void validateXML(String data, String schemaFilePath, T t) {
+    public static <T> boolean validateXML(String data, String schemaFilePath, T t) {
         try {
             JAXBContext context = JAXBContext.newInstance(t.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -131,18 +120,11 @@ public class XMLUtils {
             InputSource inputFile = new InputSource(new StringReader(data));
             
             validator.validate(new SAXSource(inputFile));
-            System.out.println("OK BEDE");
+            return true;
         } catch (JAXBException | SAXException | IOException ex) {
             Logger.getLogger(XMLUtils.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
-        
-    }
-    
-    public static XMLGregorianCalendar getCurrentTimeXMLGregorianCalendar() throws DatatypeConfigurationException {
-        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-        DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
-        XMLGregorianCalendar now = datatypeFactory.newXMLGregorianCalendar(gregorianCalendar);
-        return now;
     }
   
 }

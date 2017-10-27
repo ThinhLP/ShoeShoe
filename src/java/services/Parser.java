@@ -81,9 +81,9 @@ public class Parser {
                         } else if (tagName.equals("span")) {
                             String itemProp = XMLUtils.getNodeValue(reader, tagName, "", "itemprop");
                             if (itemProp != null && itemProp.equals("name")) {
-                                proName = XMLUtils.getTextContent(reader, tagName);
+                                proName = XMLUtils.getTextContent(reader, tagName).trim();
                             } else if (itemProp != null && itemProp.equals("brand")) {
-                                brandName = XMLUtils.getTextContent(reader, tagName);
+                                brandName = XMLUtils.getTextContent(reader, tagName).trim();
                             }
                             // Get original price
                             String classAttr = XMLUtils.getNodeValue(reader, tagName, "", "class");
@@ -120,8 +120,7 @@ public class Parser {
                     isFindItem = false;
                     long original = Utils.convertToRawMoney(originalPrice);
                     long discounted = Utils.convertToRawMoney(discountedPrice);
-                    String current = XMLUtils.getCurrentTimeXMLGregorianCalendar().toString();
-                    product = new ProductDto(++curProIndex, proName, discounted, original, current, imgUrl, inStock);
+                    product = new ProductDto(++curProIndex, proName, discounted, original, new Date(), imgUrl, inStock);
                     BrandDto brand = Utils.existBrand(brandName, curBrandList);
                     if (brand == null) {
                         brand = new BrandDto(++curBrandIndex, brandName);
@@ -134,8 +133,6 @@ public class Parser {
         } catch (XMLStreamException ex) {
             Logger.getLogger(ProcessServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (DatatypeConfigurationException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
@@ -186,10 +183,10 @@ public class Parser {
                         } else if (tagName.equals("span")) {
                             String itemProp = XMLUtils.getNodeValue(reader, tagName, "", "itemprop");
                             if (itemProp != null && itemProp.equals("name")) {
-                                String itemName = XMLUtils.getTextContent(reader, tagName);
+                                String itemName = XMLUtils.getTextContent(reader, tagName).trim();
                                 System.out.println("Name: " + itemName);
                             } else if (itemProp != null && itemProp.equals("brand")) {
-                                String itemName = XMLUtils.getTextContent(reader, tagName);
+                                String itemName = XMLUtils.getTextContent(reader, tagName).trim();
                                 System.out.println("Brand: " + itemName);
                             }
                             String className = XMLUtils.getNodeValue(reader, tagName, "", "class");

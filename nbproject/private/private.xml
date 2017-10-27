@@ -7,9 +7,11 @@
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/servlets/ProcessServlet.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/dtos/ProductListDto.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/dtos/ProductDto.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/daos/BrandDAO.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/dtos/BrandDto.java</file>
-            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/services/Parser.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/XMLUtils.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/InternetUtils.java</file>
+            <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/daos/ProductDAO.java</file>
             <file>file:/C:/Users/ThinhLPSE61759/Desktop/XML_Project/ShoeShoe/src/java/utils/DBUtils.java</file>
         </group>
     </open-files>

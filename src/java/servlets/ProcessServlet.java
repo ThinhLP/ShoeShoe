@@ -6,6 +6,8 @@
 package servlets;
 
 import commons.Const;
+import daos.BrandDAO;
+import daos.ProductDAO;
 import dtos.BrandDto;
 import dtos.BrandListDto;
 import dtos.ProductDto;
@@ -68,18 +70,24 @@ public class ProcessServlet extends HttpServlet {
         Parser.getListProductFromOneBeeperPage(saigonSneakerHtmlPath, currentsProduct, currentBrands);
         Parser.getListProductFromOneBeeperPage(onebeeperHtmlPath, currentsProduct, currentBrands);
 
+        BrandDAO brandDAO = new BrandDAO();
+        ProductDAO productDAO = new ProductDAO();
+        
         try (PrintWriter out = response.getWriter()) {
-            for (ProductDto pro : currentsProduct.getProductList()) {
-                out.println(pro);
-            }
-            
             String data = XMLUtils.marsalData(currentsProduct);
-            XMLUtils.validateXML(data, realPath + Const.FILE_PATH.SCHEMA_FILE, out);
-            out.println(data);
+            boolean isValid = XMLUtils.validateXML(data, realPath + Const.FILE_PATH.SCHEMA_FILE, currentsProduct);
+            if (isValid) {
+                // Insert brand
+                for (BrandDto brand: currentBrands.getBrandList()) {
+                    brandDAO.insert(brand);
+                }
+                // Insert product
+                for (ProductDto product: currentsProduct.getProductList()) {
+                    productDAO.insert(product);
+                }
+            }
         }
         
-     
-        //XMLUtils.validateXML(realPath + "WEB-INF/productList.xml", currentsProduct);
 
     }
 

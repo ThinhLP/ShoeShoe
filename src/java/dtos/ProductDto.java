@@ -6,6 +6,7 @@
 package dtos;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,37 +24,64 @@ import javax.xml.bind.annotation.XmlType;
     "discountedPrice",
     "originalPrice",
     "createdDate",
-    "imageUrl"
+    "imageUrl",
+    "updatedDate"
 })
 public class ProductDto implements Serializable {
+
     @XmlAttribute(required = true)
     private int proId;
-    
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String proName;
-    
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private BrandDto brand;
-    
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private long discountedPrice;
-    
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private long originalPrice;
-    
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
-    private String createdDate;
-    
+    private Date createdDate;
+
     @XmlElement(required = true, namespace = "http://www.shoeshoe.vn/productList")
     private String imageUrl;
-    
+
     @XmlAttribute(required = true)
     private Boolean inStock;
+
+    @XmlElement(namespace = "http://www.shoeshoe.vn/productList")
+    private Date updatedDate;
 
     public ProductDto() {
     }
 
-    public ProductDto(int proId, String proName, BrandDto brand, long discountedPrice, long originalPrice, String createdDate, String imageUrl, boolean inStock) {
+    public ProductDto(int proId, String proName, BrandDto brand, long discountedPrice, long originalPrice, Date createdDate, String imageUrl, boolean inStock, Date updatedDate) {
+        this.proId = proId;
+        this.proName = proName;
+        this.brand = brand;
+        this.discountedPrice = discountedPrice;
+        this.originalPrice = originalPrice;
+        this.createdDate = createdDate;
+        this.imageUrl = imageUrl;
+        this.inStock = inStock;
+        this.updatedDate = updatedDate;
+    }
+
+    public ProductDto(int proId, String proName, long discountedPrice, long originalPrice, Date createdDate, String imageUrl, boolean inStock) {
+        this.proId = proId;
+        this.proName = proName;
+        this.discountedPrice = discountedPrice;
+        this.originalPrice = originalPrice;
+        this.createdDate = createdDate;
+        this.imageUrl = imageUrl;
+        this.inStock = inStock;
+    }
+
+    public ProductDto(int proId, String proName, BrandDto brand, long discountedPrice, long originalPrice, Date createdDate, String imageUrl, boolean inStock) {
         this.proId = proId;
         this.proName = proName;
         this.brand = brand;
@@ -63,17 +91,6 @@ public class ProductDto implements Serializable {
         this.imageUrl = imageUrl;
         this.inStock = inStock;
     }
-    
-    public ProductDto(int proId, String proName, long discountedPrice, long originalPrice, String createdDate, String imageUrl, boolean inStock) {
-        this.proId = proId;
-        this.proName = proName;
-        this.discountedPrice = discountedPrice;
-        this.originalPrice = originalPrice;
-        this.createdDate = createdDate;
-        this.imageUrl = imageUrl;
-        this.inStock = inStock;
-    }
-
 
     /**
      * @return the proId
@@ -148,14 +165,14 @@ public class ProductDto implements Serializable {
     /**
      * @return the createdDate
      */
-    public String getCreatedDate() {
+    public Date getCreatedDate() {
         return createdDate;
     }
 
     /**
      * @param createdDate the createdDate to set
      */
-    public void setCreatedDate(String createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -186,20 +203,25 @@ public class ProductDto implements Serializable {
     public void setInStock(Boolean inStock) {
         this.inStock = inStock;
     }
+    
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
+    }
 
     @Override
     public String toString() {
-        return "ID: " + proId + "\n" +
-                "Name: " + proName + "\n" +
-                "Brand: " + brand.getBrandName() + "\n" +
-                "Discounted Price: " + discountedPrice + "\n" +
-                "Original Price: " + originalPrice + "\n" +
-                "In stock: " + inStock + "\n" +
-                "Create date: " + createdDate + "\n" +
-                "Img url: " + imageUrl + "\n";
+        return "ID: " + proId + "\n"
+                + "Name: " + proName + "\n"
+                + "Brand: " + brand.getBrandName() + "\n"
+                + "Discounted Price: " + discountedPrice + "\n"
+                + "Original Price: " + originalPrice + "\n"
+                + "In stock: " + inStock + "\n"
+                + "Create date: " + createdDate + "\n"
+                + "Img url: " + imageUrl + "\n";
     }
-    
-    
-    
-    
+
 }
