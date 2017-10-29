@@ -5,6 +5,7 @@
  */
 package servlets;
 
+import daos.ProductDAO;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,11 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author ThinhLPSE61759
  */
-public class ProcessServlet extends HttpServlet {
+public class ProductServlet extends HttpServlet {
 
-    public final String loginPage = "login.html";
-    public final String loginServlet = "LoginServlet";
-   
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -33,16 +31,14 @@ public class ProcessServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-         
-        String button = request.getParameter("btAction");
-        String url = loginPage;
-        if (button == null || button.isEmpty()) {
-            
-        } else if (button.equals("Login")) {
-            url = loginServlet;
-        }
+     
         
-        RequestDispatcher rd = request.getRequestDispatcher(url);
+        ProductDAO productDAO = new ProductDAO();
+        int numOfProducts = productDAO.getTotalNumberOfProducts();
+        request.setAttribute("TOTAL_PRODUCTS", numOfProducts);
+        request.setAttribute("CURRENT_PAGE", 1);
+        
+        RequestDispatcher rd = request.getRequestDispatcher("products.jsp");
         rd.forward(request, response);
     }
 

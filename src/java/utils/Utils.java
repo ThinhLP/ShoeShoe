@@ -230,5 +230,13 @@ public class Utils {
     public static java.util.Date toUtilDate(java.sql.Date date) {
         return new java.util.Date(date.getTime());
     }
+    
+    public static int toNumber(String number) {
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
 
 }

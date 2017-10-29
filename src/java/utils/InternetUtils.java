@@ -7,13 +7,9 @@ package utils;
 
 import commons.Const;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -26,11 +22,11 @@ import java.util.logging.Logger;
  */
 public class InternetUtils {
 
-    public static void parseHTML(String filePath, String uri) {
-        Writer writer = null;
+      public static String parseHTML(String uri) {
         InputStream is = null;
         BufferedReader reader = null;
         String[] redundantTags = Const.REDUNDANT_TAGS;
+        StringBuilder builder = new StringBuilder();
         try {
             URL url = new URL(uri);
             URLConnection con = url.openConnection();
@@ -41,13 +37,12 @@ public class InternetUtils {
             is = con.getInputStream();
             reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
-            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), "UTF-8"));
 
             boolean isBodyTagStart = false;
             boolean isInScriptTab = false;
             int countOpenDiv = 0;
 
-            writer.write("<body>\n");
+            builder.append("<body>").append("\n");
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
 
@@ -67,7 +62,7 @@ public class InternetUtils {
                         beforeTag = Utils.getContentBeforeTagInLine(line, redundantTags[i]);
                         isInScriptTab = true;
                         if (!beforeTag.isEmpty()) {
-                            writer.write(beforeTag + "\n");
+                            builder.append(beforeTag).append("\n");
                         }
                         break;
                     }
@@ -82,7 +77,7 @@ public class InternetUtils {
                         isInScriptTab = false;
                         isEndScriptTab = true;
                         if (!afterTag.isEmpty() && !Utils.containRedundantTag(afterTag)) {
-                            writer.write(afterTag + "\n");
+                            builder.append(afterTag).append("\n");
                         }
                         break;
                     }
@@ -108,11 +103,11 @@ public class InternetUtils {
                     if (line.contains("</body>")) {
                         break;
                     }
-                    writer.write(line + "\n");
+                    builder.append(line).append("\n");
                 }
             }
-                writer.write("</body>");
-
+                builder.append("</body>");
+            return builder.toString();
         } catch (MalformedURLException ex) {
             Logger.getLogger(InternetUtils.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -125,13 +120,11 @@ public class InternetUtils {
                 if (is != null) {
                     is.close();
                 }
-                if (writer != null) {
-                    writer.close();
-                }
+         
             } catch (IOException ex) {
                 Logger.getLogger(InternetUtils.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        return "";
     }
-
 }

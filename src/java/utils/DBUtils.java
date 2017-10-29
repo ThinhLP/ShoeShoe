@@ -17,7 +17,7 @@ public class DBUtils {
     
     public static Connection makeConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/shoedb","root","123456"); 
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/shoedb?verifyServerCertificate=false&useSSL=false","root","123456"); 
         return con;
     }
     

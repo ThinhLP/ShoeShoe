@@ -7,7 +7,6 @@ package utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.logging.Level;
@@ -32,13 +31,13 @@ import org.xml.sax.SAXException;
  * @author ThinhLPSE61759
  */
 public class XMLUtils {
-
-    public static XMLStreamReader parseFileToCursor(InputStream inputStream) throws XMLStreamException {
+    
+    public static XMLStreamReader parseToCursor(String source) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         factory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
         factory.setProperty(XMLInputFactory.IS_VALIDATING, false);
-
-        return factory.createXMLStreamReader(inputStream);
+        StringReader reader = new StringReader(source);
+        return factory.createXMLStreamReader(reader);
     }
 
     public static String getNodeValue(XMLStreamReader reader, String elementName,
@@ -84,24 +83,11 @@ public class XMLUtils {
         return null;
     }
 
-//    public static void saveToXML(String xmlFilePath, ProductListDto listProduct) {
-//        try {
-//            JAXBContext context = JAXBContext.newInstance(listProduct.getClass());
-//            Marshaller marshaller = context.createMarshaller();
-//            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-//            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-//            marshaller.marshal(listProduct, new File(xmlFilePath));
-//        } catch (JAXBException ex) {
-//            Logger.getLogger(XMLUtils.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-    
     public static <T> String marsalData(T t) {
         try {
             JAXBContext context = JAXBContext.newInstance(t.getClass());
             Marshaller marshaller =  context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             StringWriter sw = new StringWriter();
             marshaller.marshal(t, sw);
             return sw.toString();
@@ -110,18 +96,17 @@ public class XMLUtils {
         } 
     }
     
-    public static <T> boolean validateXML(String data, String schemaFilePath, T t) {
+    public static <T> boolean validateXML(String data, String schemaFilePath) {
         try {
-            JAXBContext context = JAXBContext.newInstance(t.getClass());
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = schemaFactory.newSchema(new File(schemaFilePath));
             
             Validator validator = schema.newValidator();
-            InputSource inputFile = new InputSource(new StringReader(data));
+            InputSource input = new InputSource(new StringReader(data));
             
-            validator.validate(new SAXSource(inputFile));
+            validator.validate(new SAXSource(input));
             return true;
-        } catch (JAXBException | SAXException | IOException ex) {
+        } catch (SAXException | IOException ex) {
             Logger.getLogger(XMLUtils.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }

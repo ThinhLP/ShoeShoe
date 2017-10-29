@@ -5,13 +5,16 @@
  */
 package daos;
 
+import commons.Const;
 import dtos.BrandDto;
 import dtos.ProductDto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.DBUtils;
@@ -138,6 +141,81 @@ public class ProductDAO {
             }
         }
         return null;
+    }
+
+    public List<ProductDto> getProductList(int pageNo) {
+        Connection con = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            List<ProductDto> result = new ArrayList<>();
+            con = DBUtils.makeConnection();
+            String sql = "SELECT * FROM product "
+                    + "ORDER BY updatedDate DESC "
+                    + "LIMIT ?,?";
+            stm = con.prepareStatement(sql);
+            stm.setInt(1, Const.NO_OF_PRODUCT_PER_PAGE * (pageNo - 1));
+            stm.setInt(2, Const.NO_OF_PRODUCT_PER_PAGE);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                result.add(convertToProductDto(rs));
+            }
+            return result;
+
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+    
+    public int getTotalNumberOfProducts() {
+        Connection con = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            List<ProductDto> result = new ArrayList<>();
+            con = DBUtils.makeConnection();
+            String sql = "SELECT COUNT(id) FROM product";
+            stm = con.prepareStatement(sql);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return 0;
     }
 
     private ProductDto convertToProductDto(ResultSet rs) {
