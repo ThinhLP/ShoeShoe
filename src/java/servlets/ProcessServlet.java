@@ -20,6 +20,8 @@ public class ProcessServlet extends HttpServlet {
 
     public final String loginPage = "login.html";
     public final String loginServlet = "LoginServlet";
+    public final String productServlet = "ProductServlet";
+    public final String productsPage = "products.jsp";
    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,7 +37,7 @@ public class ProcessServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
          
         String button = request.getParameter("btAction");
-        String url = loginPage;
+        String url = productsPage;
         if (button == null || button.isEmpty()) {
             
         } else if (button.equals("Login")) {

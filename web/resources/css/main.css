@@ -77,6 +77,7 @@ header {
     display: flex;
     flex-wrap: wrap;
     max-width: 1106px;
+    min-height: 400px;
     justify-content: flex-start;
 }
 
@@ -148,8 +149,6 @@ header {
 }
 
 
-/* Course duration */
-
 .card-details {
     display: flex;
     justify-content: space-between;
@@ -220,6 +219,20 @@ header {
     margin-top: 30px;
 }
 
+.card-wrapper:hover .add-cart {
+    display: block;
+}
+
+.add-cart {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.add-cart i {
+    font-size: 30px;
+}
 
 /* pagination */
 
@@ -256,4 +269,11 @@ footer {
     color: white;
     text-align: center;
     line-height: 35px;
+}
+
+#zero-product {
+    font-weight: 500;
+    color: #999;
+    font-size: 18px;
+    padding-top: 20px;
 }

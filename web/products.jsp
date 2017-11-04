@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,7 +20,7 @@
         <div id="promo-banner">Phone: 0909.909.090 - MIỄN PHÍ GIAO HÀNG TOÀN QUỐC CHO ĐƠN HÀNG TRÊN 500.000đ (Không áp dụng với các sản phẩm SALE)</div>
         <header>
             <div id="main-header"> <img src="./resources/img/logo.png" class="logo" />
-                <div class="right-header"> <span class="username">ThinhLP</span>
+                <div class="right-header"> <span class="username">${sessionScope.USER_INFO.fullname}</span>
                     <a href="#" class="shopping-cart"> <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span class="noOfItems">10</span> </a>
                 </div>
             </div>
@@ -28,151 +30,159 @@
                 <h2 class="main-section-header">Sản phẩm</h2>
                 <div class="slogan">Những mẫu giày đẹp nhất quả đất</div>
                 <div class="search-wrapper"> <span>Tìm kiếm: </span>
-                    <input type="text" placeholder="Nhập tên giày..." />
-                    <button class="button">Tìm kiếm</button>
+                    <input type="text" placeholder="Nhập tên giày..." value="" id="txtSearchValue" />
+                    <button class="button" onclick="search()" >Tìm kiếm</button>
                 </div>
-                <div class="products" id="products">
-                    <div class="card-wrapper">
-                        <div class="card-header">
-                            <div class="card-picture" style="background-image:url('resource/Photos/html.jpeg')"></div>
-                        </div>
-                        <div class="card-info">
-                            <div class="card-title">Sneaker</div>
-                            <div class="brand-name">Nike </div>
-                            <div class="card-details fixed-height">
-                                <div class="card-price"> <span class="price discounted-price">660.000đ</span> <span class="price original-price">850.000đ</span> </div>
-                            </div>
-                        </div>
-                    </div>
 
+                <%--<c:set var="productList" value="${requestScope.PRODUCTS}"/>--%>
+                <%--<c:import var="xsl" url="/resources/xsl/product.xsl" charEncoding="utf-8"/>--%>
+                <div id="zero-product">Không có sản phẩm nào</div>
+                <div class="products" id="products">
+                    <%--<x:transform doc="${productList}" xslt="${xsl}"/>--%> 
                 </div>
-                <div class="pagination">
-                    <div class="page-no active">1</div>
-                    <div class="page-no">2</div>
-                    <div class="page-no">3</div>
-                </div>
+
             </div>
         </section>
-        <footer> ShoeShoe.vn - Design by ThinhLP </footer>
+        <footer> ShoeShoe.vn - Designed by ThinhLP </footer>
+
+        <script src="./resources/js/XmlUtils.js"></script>
         <script>
-            var productListStr = '${requestScope.PRODUCTS}';
+                        var productXML;
 
-            var getXmlDoc = function (productList) {
-                var parser = new DOMParser();
-                return parser.parseFromString(productList, "text/xml");
-            };
-
-            var toVNMoney = function (rawMoney) {
-
-            };
-
-            var createCart = function (product) {
-                var cardWrapper = document.createElement("div");
-                cardWrapper.className = "card-wrapper";
-                cardWrapper.setAttribute("value", product.id);
-
-                var cardHeader = document.createElement("div");
-                cardHeader.className = "card-header";
-
-                var cardPicture = document.createElement("div");
-                cardPicture.className = "card-picture";
-                cardPicture.setAttribute("style", 'background-image:url("' + product.imageUrl + '")');
-
-                var cardInfo = document.createElement("div");
-                cardInfo.className = "card-info";
-
-                var cardTitle = document.createElement("div");
-                cardTitle.className = "card-title";
-
-                var brandName = document.createElement("div");
-                brandName.className = "brand-name";
-
-                var cardDetails = document.createElement("div");
-                cardDetails.className = "card-details fixed-height";
-
-                var cardPrice = document.createElement("div");
-                cardPrice.className = "card-price";
-
-                var disPrice = document.createElement("span");
-                if (product.discountedPrice !== product.originalPrice) {
-                    disPrice.className = "price discounted-price";
-                    var oriPrice = document.createElement("span");
-                    oriPrice.className = "price original-price";
-                    // Set price
-                    disPrice.textContent = product.discountedPrice;
-                    oriPrice.textContent = product.originalPrice;
-                    cardPrice.appendChild(disPrice);
-                    cardPrice.appendChild(oriPrice);
-                } else {
-                    disPrice.className = "price normal-price";
-                    disPrice.textContent = product.discountedPrice;
-                    cardPrice.appendChild(disPrice);
-                }
-
-                // Set brand and title
-                cardTitle.textContent = product.proName;
-                brandName.textContent = product.brandName;
+                        var xmlUtils = new XMLUtils();
+                        var searchValue = "";
+                        var heightPerPage = 0;
+                        var startPage = 0;
 
 
-                cardDetails.appendChild(cardPrice);
+                        var loadedPage = [];
 
-                cardInfo.appendChild(cardTitle);
-                cardInfo.appendChild(brandName);
-                cardInfo.appendChild(cardDetails);
-                
-                cardHeader.appendChild(cardPicture);
+//            var addProductToList = function (xml) {
+//                if (!productXML) {
+//                    productXML = document.createElement("productList");
+//                    productXML.setAttribute("xmlns", "http://www.shoeshoe.vn/productList");
+//                }
+//
+//                var products = xml.getElementsByTagName("product");
+//
+//                for (var product of products) {
+//                    productXML.appendChild(product.cloneNode(true));
+//                }
+//            };
+//            
+                        var applyXLS = function (xml, xsl, searchValue) {
+                            var result;
+                            if (window.ActiveXObject) {
+                                var xslt = new ActiveXObject("Msxml2.XSLTemplate");
+                                var xsltProcessor = xslt.createProcessor();
+                                xsltProcessor.input = xml;
+                                xsltProcessor.stylesheet = xsl;
+                                xsltProcessor.transform();
+                                xsltProcessor.addParameter("searchValue", searchValue);
+                                result = xsltProcessor.output;
+                            } else if (document.implementation && document.implementation.createDocument) {
+                                var xsltProcessor = new XSLTProcessor();
+                                xsltProcessor.importStylesheet(xsl);
+                                xsltProcessor.setParameter(null, "searchValue", searchValue);
+                                result = xsltProcessor.transformToFragment(xml, document);
+                            }
+                            return result;
+                        };
 
-                cardWrapper.appendChild(cardHeader);
-                cardWrapper.appendChild(cardInfo);
+                        var showElement = function (element) {
+                            element.style.opacity = 1;
+                        };
+                        var hideElement = function (element) {
+                            element.style.opacity = 0;
+                        };
 
-                return cardWrapper;
-            };
+                        var loadProduct = function (pageNo) {
+                            var xhr = xmlUtils.getXmlHttpRequestObject();
+                            if (!xhr) {
+                                alert("Trình duyệt của bạn không hỗ trợ Ajax");
+                                return;
+                            }
+                            xhr.open('GET', 'GetProductsServlet?pageNo=' + pageNo, false);
+                            xhr.onreadystatechange = function () {
+                                if (this.readyState === 4 && this.status === 200) {
+                                    var result = xhr.responseText;
+                                    var xml = xmlUtils.parseXML(result);
+                                    var xmlWithXSL = applyXLS(xml, productXSL, searchValue);
 
-            var loadListProductToPage = function (list) {
-                var productsElm = document.getElementById("products");
-                productsElm.innerHTML = "";
-                for (var i = 0; i < list.length; i++) {
-                    productsElm.appendChild(createCart(list[i]));
-                }
-            };
+                                    var productsContainer = document.getElementById('products');
+                                    var zeroProduct = document.getElementById('zero-product');
 
-            var processXML = function (xmlDoc) {
-                var productTags = xmlDoc.getElementsByTagName("product");
-                var productList = [];
-                for (var i = 0; i < productTags.length; i++) {
-                    var productNode = productTags[i];
-                    var product = {};
-                    product.id = productNode.getAttribute("proId");
-                    product.inStock = productNode.getAttribute("inStock");
+                                    var numOfProducts = xmlWithXSL.children.length;
+                                    if (numOfProducts == 0) {
+                                        if (pageNo == 1) {
+                                            showElement(zeroProduct);
+                                            hideElement(productsContainer);
+                                        }
+                                        return;
+                                    }
+                                    console.log(numOfProducts);
 
-                    var childNodes = productNode.childNodes;
-                    for (var j = 0; j < childNodes.length; j++) {
-                        var nodeName = childNodes[j].nodeName;
-                        if (nodeName === "proName") {
-                            product.proName = childNodes[j].textContent;
-                        } else if (nodeName === "brand") {
-                            product.brandId = childNodes[j].getAttribute("brandId");
-                            product.brandName = childNodes[j].firstChild.textContent;
-                        } else if (nodeName === "discountedPrice") {
-                            product.discountedPrice = childNodes[j].textContent;
-                        } else if (nodeName === "originalPrice") {
-                            product.originalPrice = childNodes[j].textContent;
-                        } else if (nodeName === "imageUrl") {
-                            product.imageUrl = childNodes[j].textContent;
-                        } else if (nodeName === "updatedDate") {
-                            product.updatedDate = childNodes[j].textContent;
+                                    showElement(productsContainer);
+                                    hideElement(zeroProduct);
+                                    productsContainer.insertAdjacentHTML('beforeend', xmlUtils.convertDocToString(xmlWithXSL));
+
+                                    heightPerPage = productsContainer.scrollHeight / (pageNo + 1);
+                                }
+                            };
+                            xhr.send();
+                        };
+
+                        // window scroll handler
+                        var scrollWindowHandler = function () {
+                            var scrollPos = document.documentElement.scrollTop + screen.height + 100;
+                            if (scrollPos >= startPage * heightPerPage) {
+                                if (!loadedPage[startPage]) {
+                                    loadedPage[startPage] = true;
+                                    // Load page
+                                    loadProduct(startPage + 1, searchValue);
+                                }
+                                startPage++;
+                            }
+                        };
+                        window.addEventListener('scroll', function (e) {
+                            scrollWindowHandler();
+                        });
+
+//                        window.addEventListener('resize', function (e) {
+//                            heightPerPage = document.getElementById('products').scrollHeight / startPage;
+//                        });
+
+                        // Window onload proccessor
+                        var productXSLFilePath = 'resources/xsl/product2.xsl';
+                        var productXSL;
+                        window.onload = function () {
+                            productXSL = xmlUtils.loadXMLFile(productXSLFilePath);
+                            scrollWindowHandler();
+                        };
+
+                        // Onclick search button handler
+                        function search() {
+                            searchValue = document.getElementById("txtSearchValue").value.trim().toUpperCase();
+
+                            //reset
+                            startPage = 0;
+                            loadedPage = [];
+                            heightPerPage = 0;
+                            document.getElementById('products').innerHTML = "";
+                            var noOfPagePreload = 2;
+                            for (var i = 0; i < noOfPagePreload; i++) {
+                                scrollWindowHandler();
+                                window.scrollTo(0, 20 * i);
+                            }
+
                         }
-                    }
-                    productList.push(product);
-                }
-                return productList;
-            };
 
-            // Window onload proccessor
-            window.onload = function () {
-                var productList = processXML(getXmlDoc(productListStr));
-                loadListProductToPage(productList);
-            };
+                        setInterval(function () {
+                            document.getElementById('products').innerHTML = "";
+                            for (var i = 0; i < startPage; i++) {
+                                loadProduct(i + 1);
+                            }
+                        }, 20000);
 
         </script>
     </body>

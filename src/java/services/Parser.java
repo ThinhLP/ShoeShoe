@@ -43,6 +43,8 @@ public class Parser {
             boolean findDiscountPrice = false;
             boolean isFindItem = false;
             boolean findItemImage = false;
+            boolean findOriginalPrice = false;
+            boolean hasSale = false;
 
             int curProIndex = Utils.getMaxId(currentProductList.getProductList());
             int curBrandIndex = Utils.getMaxId(currentBrandList.getBrandList());
@@ -63,7 +65,9 @@ public class Parser {
                         if (itemProp != null && itemProp.equals("itemListElement")) {
                             isInItem = true;
                             findDiscountPrice = false;
+                            findOriginalPrice = false;
                             findItemImage = false;
+                            hasSale = false;
                             proName = "";
                             imgUrl = "";
                             brandName = "";
@@ -85,16 +89,25 @@ public class Parser {
                             // Get original price
                             String classAttr = XMLUtils.getNodeValue(reader, tagName, "", "class");
 
-                            if (classAttr != null && classAttr.equals("money")) {
-                                reader.next();
-                                if (reader.getEventType() == XMLStreamConstants.CHARACTERS) {
-                                    originalPrice = reader.getText().trim();
-                                } else {
-                                    originalPrice = XMLUtils.getTextContent(reader, reader.getLocalName()).trim();
+                            if (classAttr != null) {
+                                if (classAttr.equals("price sale")) {
+                                    hasSale = true;
+                                } else if (classAttr.equals("price")) {
+                                    hasSale = false;
                                 }
-                                isInItem = false;
-                                isFindItem = true;
+
+                                if (!hasSale && classAttr.equals("money")) {
+                                    originalPrice = XMLUtils.getTextContent(reader, reader.getLocalName()).trim();
+                                    isInItem = false;
+                                    isFindItem = true;
+                                } else if (hasSale && classAttr.equals("was_money")) {
+                                    reader.next();
+                                    originalPrice = XMLUtils.getTextContent(reader, reader.getLocalName()).trim();
+                                    isInItem = false;
+                                    isFindItem = true;
+                                }
                             }
+
                         } else if (tagName.equals("link")) {
                             content = XMLUtils.getNodeValue(reader, tagName, "", "href");
                             if (content != null && content.contains("InStock")) {
@@ -147,19 +160,19 @@ public class Parser {
     }
 
     public static void getDataFromWebAndSaveToDB(String realPath) {
+        BrandDAO brandDAO = new BrandDAO();
+        ProductDAO productDAO = new ProductDAO();
 
         List<BrandDto> brands = new ArrayList<>();
         List<ProductDto> products = new ArrayList<>();
 
         BrandListDto currentBrands = new BrandListDto(brands);
         ProductListDto currentsProduct = new ProductListDto(products);
-        
+
         String[] urlOneBeeper = Const.ONE_BEEPER_URL;
         String[] urlSGSneaker = Const.SAIGON_SNEAKER_URL;
         String htmlSource;
-        BrandDAO brandDAO = new BrandDAO();
-        ProductDAO productDAO = new ProductDAO();
-        
+
         for (String url : urlOneBeeper) {
             htmlSource = InternetUtils.parseHTML(url);
             Parser.getListProductFromOneBeeperPage(htmlSource, currentsProduct, currentBrands);
@@ -167,11 +180,11 @@ public class Parser {
             boolean isValid = XMLUtils.validateXML(data, realPath + Const.FILE_PATH.SCHEMA_FILE);
             if (isValid) {
                 // Insert brand
-                for (BrandDto brand: currentBrands.getBrandList()) {
+                for (BrandDto brand : currentBrands.getBrandList()) {
                     brandDAO.insert(brand);
                 }
                 // Insert product
-                for (ProductDto product: currentsProduct.getProductList()) {
+                for (ProductDto product : currentsProduct.getProductList()) {
                     productDAO.insert(product);
                 }
             }
@@ -184,11 +197,11 @@ public class Parser {
             boolean isValid = XMLUtils.validateXML(data, realPath + Const.FILE_PATH.SCHEMA_FILE);
             if (isValid) {
                 // Insert brand
-                for (BrandDto brand: currentBrands.getBrandList()) {
+                for (BrandDto brand : currentBrands.getBrandList()) {
                     brandDAO.insert(brand);
                 }
                 // Insert product
-                for (ProductDto product: currentsProduct.getProductList()) {
+                for (ProductDto product : currentsProduct.getProductList()) {
                     productDAO.insert(product);
                 }
             }

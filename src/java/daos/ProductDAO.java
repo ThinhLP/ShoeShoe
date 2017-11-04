@@ -43,7 +43,9 @@ public class ProductDAO {
             stm.setLong(4, dto.getOriginalPrice());
             stm.setString(5, Utils.formatDate(dto.getCreatedDate()));
             stm.setBoolean(6, dto.getInStock());
-            stm.setInt(7, dto.getBrand().getBrandId());
+            BrandDAO brandDao = new BrandDAO();
+            int brandId = brandDao.findByName(dto.getBrand().getBrandName()).getBrandId();
+            stm.setInt(7, brandId);
 
             int result = stm.executeUpdate();
 
@@ -74,18 +76,19 @@ public class ProductDAO {
             con = DBUtils.makeConnection();
             String sql = "UPDATE product"
                     + " SET imageUrl = ?, discountedPrice = ?, originalPrice = ?, updatedDate = ?, inStock = ?, brand_id = ? "
-                    + " WHERE id = ?";
+                    + " WHERE name = ?";
             stm = con.prepareStatement(sql);
             stm.setString(1, dto.getImageUrl());
             stm.setLong(2, dto.getDiscountedPrice());
             stm.setLong(3, dto.getOriginalPrice());
             stm.setString(4, Utils.formatDate(new Date()));
             stm.setBoolean(5, dto.getInStock());
-            stm.setInt(6, dto.getBrand().getBrandId());
-            stm.setInt(7, dto.getProId());
+            BrandDAO brandDao = new BrandDAO();
+            int brandId = brandDao.findByName(dto.getBrand().getBrandName()).getBrandId();
+            stm.setInt(6, brandId);
+            stm.setString(7, dto.getProName());
 
             int result = stm.executeUpdate();
-
             return result > 0;
 
         } catch (ClassNotFoundException | SQLException ex) {
@@ -151,7 +154,7 @@ public class ProductDAO {
             List<ProductDto> result = new ArrayList<>();
             con = DBUtils.makeConnection();
             String sql = "SELECT * FROM product "
-                    + "ORDER BY updatedDate DESC "
+                    + "ORDER BY inStock desc, updatedDate desc "
                     + "LIMIT ?,?";
             stm = con.prepareStatement(sql);
             stm.setInt(1, Const.NO_OF_PRODUCT_PER_PAGE * (pageNo - 1));
@@ -182,7 +185,7 @@ public class ProductDAO {
         }
         return null;
     }
-    
+
     public int getTotalNumberOfProducts() {
         Connection con = null;
         PreparedStatement stm = null;

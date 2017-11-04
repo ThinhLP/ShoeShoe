@@ -5,22 +5,19 @@
  */
 package servlets;
 
-import daos.UserDAO;
-import dtos.UserDto;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author ThinhLPSE61759
  */
-public class LoginServlet extends HttpServlet {
-    public final String errorPage = "errorLogin.html";
-    public final String productServlet = "ProductServlet";
+public class GetProductsServlet extends HttpServlet {
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -33,17 +30,11 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String username = request.getParameter("txtUsername");
-        String password = request.getParameter("txtPassword");
-        UserDAO userDAO = new UserDAO();
-        UserDto user = userDAO.checkLogin(username, password);
-        String url = errorPage;
-        if (user != null) {
-            url = productServlet;
-            HttpSession session = request.getSession();
-            session.setAttribute("USER_INFO", user);
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            String data = (String) request.getAttribute("PRODUCTS");
+            out.write(data);
         }
-        response.sendRedirect(url);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

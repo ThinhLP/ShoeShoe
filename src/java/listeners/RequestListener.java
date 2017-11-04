@@ -19,7 +19,7 @@ import utils.XMLUtils;
  *
  * @author ThinhLPSE61759
  */
-public class RequestListener implements ServletRequestListener{
+public class RequestListener implements ServletRequestListener {
 
     @Override
     public void requestDestroyed(ServletRequestEvent sre) {
@@ -27,20 +27,22 @@ public class RequestListener implements ServletRequestListener{
 
     @Override
     public void requestInitialized(ServletRequestEvent sre) {
-        ServletRequest request=  sre.getServletRequest();
-        
-        String pageNoStr = request.getParameter("pageNo");
-        int pageNo = 0;
-        if (pageNoStr != null && !pageNoStr.isEmpty()) {
-            pageNo = Utils.toNumber(pageNoStr);
+        ServletRequest request = sre.getServletRequest();
+
+        String button = request.getParameter("btAction");
+        if (button == null) {
+            String pageNoStr = request.getParameter("pageNo");
+            int pageNo = 0;
+            if (pageNoStr != null && !pageNoStr.isEmpty()) {
+                pageNo = Utils.toNumber(pageNoStr);
+            }
+            pageNo = pageNo > 0 ? pageNo : 1;
+            ProductDAO productDAO = new ProductDAO();
+            List<ProductDto> productList = productDAO.getProductList(pageNo);
+            ProductListDto productListDto = new ProductListDto(productList);
+            String data = XMLUtils.marsalData(productListDto);
+            request.setAttribute("PRODUCTS", data);
         }
-        pageNo = pageNo > 0 ? pageNo : 1;
-        ProductDAO productDAO = new ProductDAO();
-        List<ProductDto> productList =  productDAO.getProductList(pageNo);
-        ProductListDto productListDto = new ProductListDto(productList);
-        String data = XMLUtils.marsalData(productListDto);
-        request.setAttribute("PRODUCTS", data);
-        
     }
-    
+
 }

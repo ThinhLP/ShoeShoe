@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.DBUtils;
@@ -61,6 +63,43 @@ public class BrandDAO {
             Logger.getLogger(BrandDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+    
+    public List<BrandDto> getListBrand() {
+        Connection con = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        List<BrandDto> result = new ArrayList<>();
+        try {
+            con = DBUtils.makeConnection();
+            String sql = "SELECT * FROM brand";
+            stm = con.prepareStatement(sql);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                BrandDto dto = convertToBrandDto(rs);
+                if (dto != null) {
+                    result.add(dto);
+                }
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return result;
     }
 
     public BrandDto findByName(String name) {
