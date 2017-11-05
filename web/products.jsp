@@ -21,6 +21,7 @@
         <div id="promo-banner">Phone: 0909.909.090 - MIỄN PHÍ GIAO HÀNG TOÀN QUỐC CHO ĐƠN HÀNG TRÊN 500.000đ (Không áp dụng với các sản phẩm SALE)</div>
         <header>
             <c:set var="fullname" value="${sessionScope.USER_INFO.fullname}" />
+            <c:set var="role" value="${sessionScope.USER_INFO.role}" />
             <div id="main-header"><a href="ProcessServlet"><img src="./resources/img/logo.png" class="logo" /></a>
                 <div class="right-header">
                     <c:if test="${fullname != null}">
@@ -28,7 +29,7 @@
                         <a href="ProcessServlet?btAction=logout">(Đăng xuất)</a>
                     </c:if>
                     <c:if test="${fullname == null}">
-                        <div class="login-link"><a href="login.html">Đăng nhập</a> | <a href="signup.jsp">Đăng ký</a></div>
+                        <div class="login-link"><a href="ProcessServlet?btAction=loginPage">Đăng nhập</a> | <a href="#">Đăng ký</a></div>
                     </c:if>
                 </div>
             </div>
@@ -40,6 +41,11 @@
                 <div class="search-wrapper"> <span>Tìm kiếm: </span>
                     <input type="text" placeholder="Nhập tên giày..." value="" id="txtSearchValue" />
                     <button class="button" onclick="search()" >Tìm kiếm</button>
+                    <c:if test="${role != null && role == 1}">
+                        <form action="ProcessServlet" method="POST" style="display: inline-block">
+                            <button class="button second-button" name="btAction" value="updateData">Cập nhật dữ liệu</button>
+                        </form>
+                    </c:if>
                 </div>
 
                 <%--<c:set var="productList" value="${requestScope.PRODUCTS}"/>--%>
@@ -114,6 +120,7 @@
                                         }
                                         return;
                                     }
+                                  
 
                                     showElement(productsContainer);
                                     hideElement(zeroProduct);

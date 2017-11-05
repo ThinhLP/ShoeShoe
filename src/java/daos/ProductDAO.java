@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.DBUtils;
@@ -81,7 +82,9 @@ public class ProductDAO {
             stm.setString(1, dto.getImageUrl());
             stm.setLong(2, dto.getDiscountedPrice());
             stm.setLong(3, dto.getOriginalPrice());
-            stm.setString(4, Utils.formatDate(new Date()));
+            Random rand = new Random();
+            int number = rand.nextInt(9999) + 1000;
+            stm.setString(4, Utils.formatDate(new Date(new Date().getTime() + number)));
             stm.setBoolean(5, dto.getInStock());
             BrandDAO brandDao = new BrandDAO();
             int brandId = brandDao.findByName(dto.getBrand().getBrandName()).getBrandId();
@@ -154,7 +157,7 @@ public class ProductDAO {
             List<ProductDto> result = new ArrayList<>();
             con = DBUtils.makeConnection();
             String sql = "SELECT * FROM product "
-                    + "ORDER BY inStock desc, updatedDate desc "
+                    + "ORDER BY inStock desc, name, updatedDate desc "
                     + "LIMIT ?,?";
             stm = con.prepareStatement(sql);
             stm.setInt(1, Const.NO_OF_PRODUCT_PER_PAGE * (pageNo - 1));

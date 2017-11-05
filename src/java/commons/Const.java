@@ -30,6 +30,8 @@ public class Const {
     
     public static String[] SAIGON_SNEAKER_URL = new String[] {
         "https://saigonsneaker.com/collections/all/cf-type-sneakers",
+        "https://saigonsneaker.com/collections/all/cf-type-sneakers?page=2",
+        "https://saigonsneaker.com/collections/all/cf-type-sneakers?page=3"
     };
     
     public static final int NO_OF_PRODUCT_PER_PAGE = 20;

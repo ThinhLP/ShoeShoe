@@ -35,12 +35,15 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
+        String previousUrl = request.getParameter("previousUrl");
         UserDAO userDAO = new UserDAO();
         UserDto user = userDAO.checkLogin(username, password);
         String url = errorPage;
-        System.out.println(request.getHeader("referer"));
         if (user != null) {
-            url = processServlet;
+            if (previousUrl == null || previousUrl.isEmpty()) {
+                previousUrl = processServlet;
+            }
+            url =  previousUrl;
             HttpSession session = request.getSession();
             session.setAttribute("USER_INFO", user);
         }

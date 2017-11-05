@@ -28,7 +28,7 @@
                         <a href="ProcessServlet?btAction=logout">(Đăng xuất)</a>
                     </c:if>
                     <c:if test="${fullname == null}">
-                        <div class="login-link"><a href="login.html">Đăng nhập</a> | <a href="signup.jsp">Đăng ký</a></div>
+                        <div class="login-link"><a href="ProcessServlet?btAction=loginPage">Đăng nhập</a> | <a href="#">Đăng ký</a></div>
                     </c:if>
                 </div>
             </div>
@@ -45,7 +45,10 @@
                     Tổng tiền: <span id="total-money">1.500.000 đ</span>
                 </div>
                 <div class="checkout">
-                    <button class="button" value="checkout" name="btAction">Thanh toán</button>
+                    <form action="ProcessServlet" method="POST" id="checkout-form">
+                        <input type="hidden" name="cartStr" value="" id="cart-field"/>
+                        <button type="button" class="button" value="checkout" name="btAction" onclick="checkout()">Thanh toán</button>
+                    </form>
                 </div>
 
             </div>
@@ -96,13 +99,16 @@
                 var zeroProductElm = document.getElementById("zero-product");
                 var cartElm = document.getElementById("cart");
                 var totalMoneyElm = document.getElementsByClassName("total-money")[0];
+                var checkoutElm = document.getElementsByClassName("checkout")[0];
                 if (noOfItems == 0) {
                     hideElement(cartElm);
                     showElement(zeroProductElm);
                     hideElement(totalMoneyElm);
+                    hideElement(checkoutElm);
                 } else {
                     showElement(cartElm);
                     showElement(totalMoneyElm);
+                    showElement(checkoutElm);
                     hideElement(zeroProductElm);
                 }
             };
@@ -182,6 +188,20 @@
                 var cartXML = xmlUtils.applyXLS(cartHandler.getCart(), cartXSL);
                 loadCart(cartXML);
                 setNumOfItems();
+            }
+            
+            // Checkout
+            var isLogin = ${fullname != null};
+            function checkout() {
+                if (!isLogin) {
+                    alert('Vui lòng đăng nhập trước khi thực hiện thanh toán.');
+                    window.location.href = "ProcessServlet?btAction=loginPage";
+                    return;
+                }
+                document.getElementById("cart-field").value = xmlUtils.convertDocToString(cartHandler.getCart());
+                alert('Đơn hàng của bạn đang được xử lý. Cảm ơn bạn đã tin tưởng đặt hàng tại shop chúng tôi.');
+                localStorage.removeItem('CART');
+                document.getElementById("checkout-form").submit();
             }
 
 

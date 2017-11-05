@@ -84,7 +84,7 @@ header {
     left:100%;
     transform: translateX(-50%);
     border-radius: 50%;
-    
+
 }
 
 
@@ -236,6 +236,11 @@ header {
     height: 30px;
     line-height: 30px;
     padding: 0 10px;
+}
+
+.second-button {
+    background-color: #4aa0d5;
+    color: #fff;
 }
 
 .main-section-header {

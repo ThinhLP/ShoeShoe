@@ -74,4 +74,35 @@ public class UserDAO {
         return null;
 
     }
+    
+    public boolean isAdmin(int userId) {
+        Connection con = null;
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        try {
+            con = DBUtils.makeConnection();
+            String sql = "SELECT * FROM account WHERE id = ? AND role = 1";
+            stm = con.prepareStatement(sql);
+            stm.setInt(1, userId);
+            rs = stm.executeQuery();
+            return rs.next();
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (rs != null) {
+                      rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProductDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
 }
