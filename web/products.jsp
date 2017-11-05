@@ -11,17 +11,25 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Shoe Shoe - Sản phẩm</title>
+        <title>Sản phẩm | ShoeShoe.vn</title>
         <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <link rel="stylesheet" href="./resources/css/font-awesome-4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="./resources/css/main.css">
     </head>
     <body>
+        <a href="ProcessServlet?btAction=ViewCart" class="shopping-cart"> <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span id="noOfItems">0</span> </a>
         <div id="promo-banner">Phone: 0909.909.090 - MIỄN PHÍ GIAO HÀNG TOÀN QUỐC CHO ĐƠN HÀNG TRÊN 500.000đ (Không áp dụng với các sản phẩm SALE)</div>
         <header>
-            <div id="main-header"> <img src="./resources/img/logo.png" class="logo" />
-                <div class="right-header"> <span class="username">${sessionScope.USER_INFO.fullname}</span>
-                    <a href="#" class="shopping-cart"> <i class="fa fa-shopping-cart" aria-hidden="true"></i> <span class="noOfItems">10</span> </a>
+            <c:set var="fullname" value="${sessionScope.USER_INFO.fullname}" />
+            <div id="main-header"><a href="ProcessServlet"><img src="./resources/img/logo.png" class="logo" /></a>
+                <div class="right-header">
+                    <c:if test="${fullname != null}">
+                        <span class="username">${fullname}</span>
+                        <a href="ProcessServlet?btAction=logout">(Đăng xuất)</a>
+                    </c:if>
+                    <c:if test="${fullname == null}">
+                        <div class="login-link"><a href="login.html">Đăng nhập</a> | <a href="signup.jsp">Đăng ký</a></div>
+                    </c:if>
                 </div>
             </div>
         </header>
@@ -46,9 +54,8 @@
         <footer> ShoeShoe.vn - Designed by ThinhLP </footer>
 
         <script src="./resources/js/XmlUtils.js"></script>
+        <script src="./resources/js/cart.js"></script>
         <script>
-                        var productXML;
-
                         var xmlUtils = new XMLUtils();
                         var searchValue = "";
                         var heightPerPage = 0;
@@ -57,19 +64,6 @@
 
                         var loadedPage = [];
 
-//            var addProductToList = function (xml) {
-//                if (!productXML) {
-//                    productXML = document.createElement("productList");
-//                    productXML.setAttribute("xmlns", "http://www.shoeshoe.vn/productList");
-//                }
-//
-//                var products = xml.getElementsByTagName("product");
-//
-//                for (var product of products) {
-//                    productXML.appendChild(product.cloneNode(true));
-//                }
-//            };
-//            
                         var applyXLS = function (xml, xsl, searchValue) {
                             var result;
                             if (window.ActiveXObject) {
@@ -107,8 +101,8 @@
                                 if (this.readyState === 4 && this.status === 200) {
                                     var result = xhr.responseText;
                                     var xml = xmlUtils.parseXML(result);
-                                    var xmlWithXSL = applyXLS(xml, productXSL, searchValue);
 
+                                    var xmlWithXSL = applyXLS(xml, productXSL, searchValue);
                                     var productsContainer = document.getElementById('products');
                                     var zeroProduct = document.getElementById('zero-product');
 
@@ -120,7 +114,6 @@
                                         }
                                         return;
                                     }
-                                    console.log(numOfProducts);
 
                                     showElement(productsContainer);
                                     hideElement(zeroProduct);
@@ -158,6 +151,7 @@
                         window.onload = function () {
                             productXSL = xmlUtils.loadXMLFile(productXSLFilePath);
                             scrollWindowHandler();
+                            getCurrentCart();
                         };
 
                         // Onclick search button handler
@@ -183,6 +177,34 @@
                                 loadProduct(i + 1);
                             }
                         }, 20000);
+
+
+                        // Cart handler 
+                        var cart;
+                        var cartHandler;
+
+                        var getCurrentCart = function () {
+                            var cartStr = localStorage.getItem("CART");
+                            if (cartStr == null) {
+                                cartStr = "<cart xmlns='http://www.shoeshoe.vn/cartList'></cart>";
+                            }
+                            cart = xmlUtils.parseXML(cartStr);
+                            cartHandler = new CartHandler(cart);
+                            cartHandler.setNumOfItems();
+                        };
+
+                        function addToCart(id, name, imageUrl, price) {
+//                            var existedItem = cartHandler.checkExistedItem(id);
+//
+//                            if (existedItem != null) {
+//                                cartHandler.updateItem(existedItem);
+//                            } else {
+                                cartHandler.addItem(id, name, imageUrl, price);
+//                            }
+                            cartHandler.setNumOfItems();
+                            localStorage.setItem("CART", xmlUtils.convertDocToString(cartHandler.getCart()));
+                            alert('Đã thêm sản phẩm vào giỏ hàng của bạn');
+                        }
 
         </script>
     </body>

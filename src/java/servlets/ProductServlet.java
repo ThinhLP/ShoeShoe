@@ -33,10 +33,10 @@ public class ProductServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
      
         
-        ProductDAO productDAO = new ProductDAO();
-        int numOfProducts = productDAO.getTotalNumberOfProducts();
-        request.setAttribute("TOTAL_PRODUCTS", numOfProducts);
-        request.setAttribute("CURRENT_PAGE", 1);
+//        ProductDAO productDAO = new ProductDAO();
+//        int numOfProducts = productDAO.getTotalNumberOfProducts();
+//        request.setAttribute("TOTAL_PRODUCTS", numOfProducts);
+//        request.setAttribute("CURRENT_PAGE", 1);
         
         RequestDispatcher rd = request.getRequestDispatcher("products.jsp");
         rd.forward(request, response);

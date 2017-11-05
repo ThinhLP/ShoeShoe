@@ -6,25 +6,19 @@
 package servlets;
 
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author ThinhLPSE61759
  */
-public class ProcessServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
 
-    public final String loginPage = "login.html";
-    public final String loginServlet = "LoginServlet";
-    public final String productServlet = "ProductServlet";
-    public final String productsPage = "products.jsp";
-    public final String viewCartPage = "cart.jsp";
-    public final String logoutServlet = "LogoutServlet";
-   
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,21 +31,11 @@ public class ProcessServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-         
-        String button = request.getParameter("btAction");
-        String url = productsPage;
-        if (button == null || button.isEmpty()) {
-            
-        } else if (button.equals("Login")) {
-            url = loginServlet;
-        } else if (button.equals("ViewCart")){
-            url = viewCartPage;
-        } else if (button.equals("logout")) {
-            url = logoutServlet;
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+           session.setAttribute("USER_INFO", null);
         }
-        
-        RequestDispatcher rd = request.getRequestDispatcher(url);
-        rd.forward(request, response);
+        response.sendRedirect("ProcessServlet");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
  */
 public class LoginServlet extends HttpServlet {
     public final String errorPage = "errorLogin.html";
-    public final String productServlet = "ProductServlet";
+    public final String processServlet = "ProcessServlet";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,8 +38,9 @@ public class LoginServlet extends HttpServlet {
         UserDAO userDAO = new UserDAO();
         UserDto user = userDAO.checkLogin(username, password);
         String url = errorPage;
+        System.out.println(request.getHeader("referer"));
         if (user != null) {
-            url = productServlet;
+            url = processServlet;
             HttpSession session = request.getSession();
             session.setAttribute("USER_INFO", user);
         }

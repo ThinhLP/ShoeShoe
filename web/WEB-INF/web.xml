@@ -24,6 +24,10 @@
         <servlet-name>GetProductsServlet</servlet-name>
         <servlet-class>servlets.GetProductsServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>servlets.LogoutServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ProcessServlet</servlet-name>
         <url-pattern>/ProcessServlet</url-pattern>
@@ -39,6 +43,10 @@
     <servlet-mapping>
         <servlet-name>GetProductsServlet</servlet-name>
         <url-pattern>/GetProductsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

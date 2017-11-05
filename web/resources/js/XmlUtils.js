@@ -37,11 +37,29 @@ function XMLUtils() {
         return serialize.serializeToString(doc);
     };
 
+    var applyXLS = function (xml, xsl) {
+        var result;
+        if (window.ActiveXObject) {
+            var xslt = new ActiveXObject("Msxml2.XSLTemplate");
+            var xsltProcessor = xslt.createProcessor();
+            xsltProcessor.input = xml;
+            xsltProcessor.stylesheet = xsl;
+            xsltProcessor.transform();
+            result = xsltProcessor.output;
+        } else if (document.implementation && document.implementation.createDocument) {
+            var xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xsl);
+            result = xsltProcessor.transformToFragment(xml, document);
+        }
+        return result;
+    };
+
     return {
         parseXML: parseXML,
         getXmlHttpRequestObject: getXmlHttpRequestObject,
         loadXMLFile: loadXMLFile,
-        convertDocToString: convertDocToString
+        convertDocToString: convertDocToString,
+        applyXLS: applyXLS
     };
 }
 

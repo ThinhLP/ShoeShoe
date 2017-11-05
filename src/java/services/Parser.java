@@ -87,7 +87,7 @@ public class Parser {
                                 brandName = XMLUtils.getTextContent(reader, tagName).trim();
                             }
                             // Get original price
-                            String classAttr = XMLUtils.getNodeValue(reader, tagName, "", "class");
+                            String classAttr = XMLUtils.getNodeValue(reader, tagName, "", "class").trim();
 
                             if (classAttr != null) {
                                 if (classAttr.equals("price sale")) {
@@ -100,8 +100,9 @@ public class Parser {
                                     originalPrice = XMLUtils.getTextContent(reader, reader.getLocalName()).trim();
                                     isInItem = false;
                                     isFindItem = true;
-                                } else if (hasSale && classAttr.equals("was_money")) {
-                                    reader.next();
+                                } else if (hasSale && classAttr.equals("was_price")) {
+                                    findOriginalPrice = true;                            
+                                } else if (findOriginalPrice && classAttr.equals("money")) {
                                     originalPrice = XMLUtils.getTextContent(reader, reader.getLocalName()).trim();
                                     isInItem = false;
                                     isFindItem = true;

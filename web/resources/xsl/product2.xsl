@@ -14,6 +14,8 @@
     <xsl:param name="searchValue" />
     <xsl:variable name="lower" select="'abcdefghijklmnopqrstuvwxyzáàảạãăắằặẵâấầậẫđéèẻẹẽêềếểễệòóỏọõôồốỗổộơờớởỡợưừứửữựìíịĩỉ'" />
     <xsl:variable name="upper" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀẢẠÃĂẮẰẶẴÂẤẦẬẪĐÉÈẺẸẼÊỀẾỂỄỆÒÓỎỌÕÔỒỐỖỔỘƠỜỚỞỠỢƯỪỨỬỮỰÌÍỊĨỈ'" />
+    <xsl:variable name="singleQuoteMark">'</xsl:variable>
+    <xsl:variable name="doubleQuoteMark">"</xsl:variable>
     <!-- TODO customize transformation rules 
          syntax recommendation http://www.w3.org/TR/xslt 
     -->
@@ -52,7 +54,8 @@
                                                 <xsl:value-of select="format-number(p:discountedPrice, '#.###', 'vnd')" /> đ
                                             </span> 
                                         </xsl:if>
-                                        <div class="add-cart">
+                                        <div class="add-cart" 
+                                             onclick='addToCart({@proId},"{translate(p:proName,$doubleQuoteMark,$singleQuoteMark)}","{p:imageUrl}",{p:discountedPrice})'>
                                             <i class="fa fa-cart-plus" aria-hidden="true"></i>
                                         </div>
                                     </xsl:if>
